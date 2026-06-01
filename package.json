@@ -1,6 +1,6 @@
 {
 	"name": "mcp-tempo-jira",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"description": "MCP server for Tempo time tracking plugin and Jira",
 	"type": "module",
 	"main": "dist/index.js",
