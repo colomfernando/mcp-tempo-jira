@@ -54,6 +54,20 @@ export const INPUT_SCHEMA_BULK_CREATE_WORKLOGS = z.object({
 		.describe('List of worklogs to create (max 50)')
 });
 
+export type WorklogResult = {
+	tempoWorklogId: number;
+	issue: { id: number };
+	timeSpentSeconds: number;
+	startDate: string;
+	startTime?: string;
+	description?: string;
+	attributes?: { values: { key: string; value: string }[] };
+};
+
+export type WorklogResponse = {
+	results: WorklogResult[];
+};
+
 export const INPUT_SCHEMA_SEARCH_WORKLOGS = z.object({
 	from: z.string().optional().describe('Start date (yyyy-MM-dd)'),
 	to: z.string().optional().describe('End date (yyyy-MM-dd)'),

@@ -7,12 +7,16 @@ import {
 	INPUT_SCHEMA_LIST_WORKLOGS,
 	INPUT_SCHEMA_BULK_CREATE_WORKLOGS,
 	INPUT_SCHEMA_DELETE_WORKLOG,
-	INPUT_SCHEMA_UPDATE_WORKLOG
+	INPUT_SCHEMA_UPDATE_WORKLOG,
+	type WorklogResult,
+	type WorklogResponse
 } from './schemas.js';
+import { formatWorklog } from './formatter.js';
 import TempoClient from '../../tempo-client.js';
 
 export default class WorklogTool {
 	private readonly basePath = '/worklogs';
+
 	constructor(
 		private server: McpServer,
 		private client: TempoClient,
@@ -34,13 +38,16 @@ export default class WorklogTool {
 		this.server.registerTool(
 			'get_user_worklogs',
 			{
-				description: 'get worlogs for the authenticated user',
+				description: 'get worklogs for the authenticated user',
 				inputSchema: INPUT_SCHEMA_USER_WORKLOGS
 			},
 			async ({ from, to }) => {
-				const worklogs = await this.client.get(`${this.basePath}/user/${this.accountId}`, { from, to });
+				const response = await this.client.get<WorklogResponse>(`${this.basePath}/user/${this.accountId}`, {
+					from,
+					to
+				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(worklogs) }]
+					content: [{ type: 'text', text: JSON.stringify(response.results.map(formatWorklog)) }]
 				};
 			}
 		);
@@ -55,7 +62,7 @@ export default class WorklogTool {
 				inputSchema: INPUT_SCHEMA_LIST_WORKLOGS
 			},
 			async ({ projectId, issueId, from, to, updatedFrom, offset, limit, orderBy }) => {
-				const worklogs = await this.client.get(this.basePath, {
+				const response = await this.client.get<WorklogResponse>(this.basePath, {
 					projectId,
 					issueId,
 					from,
@@ -66,7 +73,7 @@ export default class WorklogTool {
 					orderBy
 				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(worklogs) }]
+					content: [{ type: 'text', text: JSON.stringify(response.results.map(formatWorklog)) }]
 				};
 			}
 		);
@@ -81,7 +88,7 @@ export default class WorklogTool {
 				inputSchema: INPUT_SCHEMA_SEARCH_WORKLOGS
 			},
 			async ({ from, to, authorIds, issueIds, projectIds, updatedFrom, offset, limit }) => {
-				const worklogs = await this.client.post(`${this.basePath}/search`, {
+				const response = await this.client.post<WorklogResponse>(`${this.basePath}/search`, {
 					from,
 					to,
 					authorIds,
@@ -92,7 +99,7 @@ export default class WorklogTool {
 					limit
 				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(worklogs) }]
+					content: [{ type: 'text', text: JSON.stringify(response.results.map(formatWorklog)) }]
 				};
 			}
 		);
@@ -102,12 +109,13 @@ export default class WorklogTool {
 		this.server.registerTool(
 			'create_worklog',
 			{
-				description: 'Create a new worklog for the authenticated user. Always call list_work_attributes first to check which attributes are required and their valid values before creating.',
+				description:
+					'Create a new worklog for the authenticated user. Always call list_work_attributes first to check which attributes are required and their valid values before creating.',
 				inputSchema: INPUT_SCHEMA_CREATE_WORKLOG
 			},
 			async ({ issueId, startDate, timeSpentHours, timeSpentMinutes, description, startTime, attributes }) => {
 				const timeSpentSeconds = (timeSpentHours ?? 0) * 3600 + (timeSpentMinutes ?? 0) * 60;
-				const worklog = await this.client.post(this.basePath, {
+				const worklog = await this.client.post<WorklogResult>(this.basePath, {
 					authorAccountId: this.accountId,
 					issueId,
 					startDate,
@@ -117,7 +125,7 @@ export default class WorklogTool {
 					attributes
 				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(worklog) }]
+					content: [{ type: 'text', text: JSON.stringify(formatWorklog(worklog)) }]
 				};
 			}
 		);
@@ -139,9 +147,9 @@ export default class WorklogTool {
 					description,
 					startTime
 				}));
-				const result = await this.client.post(`${this.basePath}/bulk/${issueId}`, body);
+				const response = await this.client.post<WorklogResponse>(`${this.basePath}/bulk/${issueId}`, body);
 				return {
-					content: [{ type: 'text', text: JSON.stringify(result) }]
+					content: [{ type: 'text', text: JSON.stringify(response.results.map(formatWorklog)) }]
 				};
 			}
 		);
@@ -151,12 +159,13 @@ export default class WorklogTool {
 		this.server.registerTool(
 			'update_worklog',
 			{
-				description: 'Update an existing worklog by ID. Always call list_work_attributes first to check which attributes are required and their valid values before updating.',
+				description:
+					'Update an existing worklog by ID. Always call list_work_attributes first to check which attributes are required and their valid values before updating.',
 				inputSchema: INPUT_SCHEMA_UPDATE_WORKLOG
 			},
 			async ({ id, issueId, startDate, timeSpentHours, timeSpentMinutes, description, startTime, attributes }) => {
 				const timeSpentSeconds = (timeSpentHours ?? 0) * 3600 + (timeSpentMinutes ?? 0) * 60;
-				const worklog = await this.client.put(`${this.basePath}/${id}`, {
+				const worklog = await this.client.put<WorklogResult>(`${this.basePath}/${id}`, {
 					authorAccountId: this.accountId,
 					issueId,
 					startDate,
@@ -166,7 +175,7 @@ export default class WorklogTool {
 					attributes
 				});
 				return {
-					content: [{ type: 'text', text: JSON.stringify(worklog) }]
+					content: [{ type: 'text', text: JSON.stringify(formatWorklog(worklog)) }]
 				};
 			}
 		);
@@ -196,9 +205,9 @@ export default class WorklogTool {
 				inputSchema: INPUT_SCHEMA_GET_WORKLOG
 			},
 			async ({ id }) => {
-				const worklog = await this.client.get(`${this.basePath}/${id}`);
+				const worklog = await this.client.get<WorklogResult>(`${this.basePath}/${id}`);
 				return {
-					content: [{ type: 'text', text: JSON.stringify(worklog) }]
+					content: [{ type: 'text', text: JSON.stringify(formatWorklog(worklog)) }]
 				};
 			}
 		);
