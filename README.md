@@ -4,6 +4,8 @@ MCP server for [Tempo](https://www.tempo.io/), the Jira time tracking plugin. Le
 
 ## Tools
 
+### Worklogs
+
 | Tool                   | Description                                                            |
 | ---------------------- | ---------------------------------------------------------------------- |
 | `get_user_worklogs`    | Get worklogs for the authenticated user                                |
@@ -16,6 +18,14 @@ MCP server for [Tempo](https://www.tempo.io/), the Jira time tracking plugin. Le
 | `delete_worklog`       | Delete an existing worklog by ID                                       |
 
 See [docs/worklogs.md](docs/worklogs.md) for detailed parameter reference.
+
+### Work Attributes
+
+| Tool                   | Description                                             |
+| ---------------------- | ------------------------------------------------------- |
+| `list_work_attributes` | List all work attributes defined in the Tempo workspace |
+
+See [docs/work-attributes.md](docs/work-attributes.md) for detailed parameter reference.
 
 ## Configuration
 
@@ -47,7 +57,32 @@ Add the following to your `claude_desktop_config.json` (usually at `~/Library/Ap
 
 ### Claude Code
 
-Run the following command to add the MCP server at user level (available across all your projects):
+Both options save to `~/.claude.json` and are available across all your projects.
+
+**Option 1 — Add the server and set environment variables manually:**
+
+```bash
+claude mcp add --scope user mcp-tempo-jira -- npx -y mcp-tempo-jira
+```
+
+Then open `~/.claude.json` and add the environment variables under the `mcp-tempo-jira` entry:
+
+```json
+{
+  "mcpServers": {
+    "mcp-tempo-jira": {
+      "command": "npx",
+      "args": ["-y", "mcp-tempo-jira"],
+      "env": {
+        "TEMPO_API_TOKEN": "your_tempo_token",
+        "ACCOUNT_JIRA_ID": "your_jira_account_id"
+      }
+    }
+  }
+}
+```
+
+**Option 2 — Add the server with environment variables inline:**
 
 ```bash
 claude mcp add --scope user mcp-tempo-jira -e TEMPO_API_TOKEN=your_tempo_token -e ACCOUNT_JIRA_ID=your_jira_account_id -- npx -y mcp-tempo-jira
