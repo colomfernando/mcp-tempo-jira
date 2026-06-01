@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-01
+
 ### Added
 
 - `get_user_worklogs` tool — get worklogs for the authenticated user filtered by date range
@@ -17,3 +19,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `bulk_create_worklogs` tool — create multiple worklogs for the same issue at once (max 50)
 - `update_worklog` tool — update an existing worklog by ID
 - `delete_worklog` tool — delete an existing worklog by ID
+- `list_work_attributes` tool — list all work attributes defined in the Tempo workspace
