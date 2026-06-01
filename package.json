@@ -22,6 +22,14 @@
 		"time-tracking",
 		"worklog"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/colomfernando/mcp-tempo-jira.git"
+	},
+	"homepage": "https://github.com/colomfernando/mcp-tempo-jira#readme",
+	"bugs": {
+		"url": "https://github.com/colomfernando/mcp-tempo-jira/issues"
+	},
 	"author": "Fernando Colom",
 	"license": "MIT",
 	"dependencies": {
