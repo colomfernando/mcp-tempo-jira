@@ -34,7 +34,11 @@ export const INPUT_SCHEMA_CREATE_WORKLOG = z.object({
 	timeSpentHours: z.number().optional().describe('Hours spent'),
 	timeSpentMinutes: z.number().optional().describe('Minutes spent'),
 	description: z.string().optional().describe('Worklog description'),
-	startTime: z.string().optional().describe('Start time (HH:mm:ss)')
+	startTime: z.string().optional().describe('Start time (HH:mm:ss)'),
+	attributes: z.array(z.object({
+		key: z.string().describe('Work attribute key (e.g. _Tipotarea_)'),
+		value: z.string().describe('Work attribute value')
+	})).optional().describe('Work attributes — use list_work_attributes to get available keys and values')
 });
 
 export const INPUT_SCHEMA_UPDATE_WORKLOG = z

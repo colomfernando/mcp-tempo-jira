@@ -11,6 +11,15 @@ export default class TempoClient {
 				Authorization: `Bearer ${apiToken}`
 			}
 		});
+
+		this.httpClient.interceptors.response.use(
+			response => response,
+			error => {
+				const status = error.response?.status;
+				const message = error.response?.data?.message ?? error.message;
+				return Promise.reject(new Error(`Tempo API error ${status}: ${message}`));
+			}
+		);
 	}
 
 	async get<T>(path: string, params?: Record<string, unknown>): Promise<T> {

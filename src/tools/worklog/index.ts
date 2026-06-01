@@ -102,10 +102,10 @@ export default class WorklogTool {
 		this.server.registerTool(
 			'create_worklog',
 			{
-				description: 'Create a new worklog for the authenticated user',
+				description: 'Create a new worklog for the authenticated user. Always call list_work_attributes first to check which attributes are required and their valid values before creating.',
 				inputSchema: INPUT_SCHEMA_CREATE_WORKLOG
 			},
-			async ({ issueId, startDate, timeSpentHours, timeSpentMinutes, description, startTime }) => {
+			async ({ issueId, startDate, timeSpentHours, timeSpentMinutes, description, startTime, attributes }) => {
 				const timeSpentSeconds = (timeSpentHours ?? 0) * 3600 + (timeSpentMinutes ?? 0) * 60;
 				const worklog = await this.client.post(this.basePath, {
 					authorAccountId: this.accountId,
@@ -113,7 +113,8 @@ export default class WorklogTool {
 					startDate,
 					timeSpentSeconds,
 					description,
-					startTime
+					startTime,
+					attributes
 				});
 				return {
 					content: [{ type: 'text', text: JSON.stringify(worklog) }]
@@ -150,10 +151,10 @@ export default class WorklogTool {
 		this.server.registerTool(
 			'update_worklog',
 			{
-				description: 'Update an existing worklog by ID',
+				description: 'Update an existing worklog by ID. Always call list_work_attributes first to check which attributes are required and their valid values before updating.',
 				inputSchema: INPUT_SCHEMA_UPDATE_WORKLOG
 			},
-			async ({ id, issueId, startDate, timeSpentHours, timeSpentMinutes, description, startTime }) => {
+			async ({ id, issueId, startDate, timeSpentHours, timeSpentMinutes, description, startTime, attributes }) => {
 				const timeSpentSeconds = (timeSpentHours ?? 0) * 3600 + (timeSpentMinutes ?? 0) * 60;
 				const worklog = await this.client.put(`${this.basePath}/${id}`, {
 					authorAccountId: this.accountId,
@@ -161,7 +162,8 @@ export default class WorklogTool {
 					startDate,
 					timeSpentSeconds,
 					description,
-					startTime
+					startTime,
+					attributes
 				});
 				return {
 					content: [{ type: 'text', text: JSON.stringify(worklog) }]

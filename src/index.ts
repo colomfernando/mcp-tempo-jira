@@ -3,6 +3,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import TempoClient from './tempo-client.js';
 import WorklogTool from './tools/worklog/index.js';
+import WorkAttributeTool from './tools/work-attribute/index.js';
 
 const server = new McpServer({
 	name: 'mcp-tempo',
@@ -25,6 +26,7 @@ const main = async () => {
 
 	const tempoClient = new TempoClient(token);
 	new WorklogTool(server, tempoClient, accountId).register();
+	new WorkAttributeTool(server, tempoClient).register();
 
 	const transport = new StdioServerTransport();
 	await server.connect(transport);
