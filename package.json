@@ -1,0 +1,33 @@
+{
+	"name": "mcp-tempo-jira",
+	"version": "0.0.1",
+	"description": "MCP server for Tempo time tracking plugin and Jira",
+	"type": "module",
+	"main": "dist/index.js",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "rm -rf dist &&tsc",
+		"dev": "tsc --watch",
+		"start": "pnpm build && node --env-file=.env dist/index.js"
+	},
+	"keywords": [
+		"mcp",
+		"tempo",
+		"jira",
+		"time-tracking",
+		"worklog"
+	],
+	"author": "Fernando Colom",
+	"license": "MIT",
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.29.0",
+		"axios": "^1.16.1",
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"@types/node": "^25.9.1",
+		"typescript": "^6.0.3"
+	}
+}
