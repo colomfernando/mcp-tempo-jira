@@ -6,7 +6,7 @@ MCP server for [Tempo](https://www.tempo.io/), the Jira time tracking plugin. Le
 
 | Tool | Description |
 |------|-------------|
-| `get_user_worklogs` | Get worklogs for the authenticated user, optionally filtered by date range |
+| `get_user_worklogs` | Get worklogs for the authenticated user |
 | `list_worklogs` | List worklogs with simple filters (date range, issue IDs, project IDs) |
 | `search_worklogs` | Search worklogs with advanced filters including multiple authors |
 | `get_worklog` | Get a single worklog by ID |
@@ -15,16 +15,9 @@ MCP server for [Tempo](https://www.tempo.io/), the Jira time tracking plugin. Le
 | `update_worklog` | Update an existing worklog by ID |
 | `delete_worklog` | Delete an existing worklog by ID |
 
+See [docs/worklogs.md](docs/worklogs.md) for detailed parameter reference.
+
 ## Configuration
-
-### Prerequisites
-
-Build the project before configuring:
-
-```bash
-pnpm install
-pnpm build
-```
 
 ### Environment variables
 
@@ -41,8 +34,8 @@ Add the following to your `claude_desktop_config.json` (usually at `~/Library/Ap
 {
   "mcpServers": {
     "mcp-tempo-jira": {
-      "command": "node",
-      "args": ["/absolute/path/to/mcp-tempo-jira/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "mcp-tempo-jira"],
       "env": {
         "TEMPO_API_TOKEN": "your_tempo_token",
         "ACCOUNT_JIRA_ID": "your_jira_account_id"
@@ -54,10 +47,16 @@ Add the following to your `claude_desktop_config.json` (usually at `~/Library/Ap
 
 ### Claude Code
 
-Run the following command in your terminal:
+Run the following command to add the MCP server at user level (available across all your projects):
 
 ```bash
-claude mcp add mcp-tempo-jira node /absolute/path/to/mcp-tempo-jira/dist/index.js \
-  -e TEMPO_API_TOKEN=your_tempo_token \
-  -e ACCOUNT_JIRA_ID=your_jira_account_id
+claude mcp add --scope user mcp-tempo-jira -e TEMPO_API_TOKEN=your_tempo_token -e ACCOUNT_JIRA_ID=your_jira_account_id -- npx -y mcp-tempo-jira
 ```
+
+## Development
+
+See [docs/development.md](docs/development.md) for setup, local testing with MCP Inspector, and how to test with Claude Code.
+
+## References
+
+- [Tempo API documentation](https://apidocs.tempo.io/)
